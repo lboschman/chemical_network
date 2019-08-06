@@ -17,12 +17,12 @@ class Network:
         else:
             self.compounds = {name: cm.Compound(name, density=density)}
 
-    def add_reaction(self, reactants, products, sigma, norm=1):
-        if self.reactions is not None:
-            self.reactions.append(rc.Reaction(reactants=reactants,
-                                              products=products,
-                                              sigma=sigma,
-                                              norm=norm
-                                              ))
+    def add_reaction(self, reactants, products, sigma, barrier=0., norm=1):
+        self.reactions.append(rc.Reaction(reactants=reactants,
+                                          products=products,
+                                          sigma=sigma,
+                                          barrier=barrier,
+                                          norm=norm
+                                          ))
 
 
