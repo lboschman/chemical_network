@@ -2,7 +2,7 @@
 
 
 class Compound:
-    def __init__(self, name: str, density=1.):
+    def __init__(self, name: str, density=0.):
         self._name = name
         self._density = density
 
