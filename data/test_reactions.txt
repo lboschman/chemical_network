@@ -1,0 +1,2 @@
+Reactants                       Products                        Sigma                       Barrier
+C     H                         CH                              1                           0
