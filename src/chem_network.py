@@ -23,16 +23,17 @@ class Network:
 
     def add_reaction(self, reactants: List[str], products: List[str], sigma, barrier=0., norm=1):
         for reactant in reactants:
-            self.add_compound(reactant)
+            if self.compounds is None or reactant not in self.compounds:
+                self.add_compound(reactant)
         for product in products:
-            self.add_compound(product)
+            if self.compounds is None or product not in self.compounds:
+                self.add_compound(product)
         self.reactions.append(rc.Reaction(reactants=[self.compounds[reactant] for reactant in reactants],
                                           products=[self.compounds[product] for product in products],
                                           sigma=sigma,
                                           barrier=barrier,
                                           norm=norm
                                           ))
-
 
     def get_rates(self):
         for reaction in self.reactions:
@@ -53,7 +54,8 @@ class Network:
         for compound in self.compounds.values():
             if compound.name in starting_density.keys():
                 compound.density = starting_density[compound.name]
-            else: compound.density = 0.
+            else:
+                compound.density = 0.
 
         compound_densities = {compound.name: [compound.density] for compound in self.compounds.values()}
 

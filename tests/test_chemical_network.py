@@ -17,7 +17,5 @@ for line in lines:
                                   barrier=float(line[barrier_index:-1].strip(' \n'))
                                   )
 
-
-
-chemical_network.run_network({'Enzyme': 1, 'Substrate': 10})
+print(chemical_network.run_network({'Enzyme': 1, 'Substrate': 10}))
 
