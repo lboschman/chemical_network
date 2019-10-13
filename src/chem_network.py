@@ -66,7 +66,7 @@ class Network:
 
         compound_densities.update({'time': time_steps})
 
-        return pd.DataFrame(data=compound_densities)
+        return pd.DataFrame(data=compound_densities).set_index('time')
 
 
 
