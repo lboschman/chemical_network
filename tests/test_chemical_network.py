@@ -1,3 +1,6 @@
+import matplotlib as mpl
+from matplotlib import pyplot as plt
+
 import chem_network as cn
 
 f = open('../data/test_reactions.txt', 'r')
@@ -17,5 +20,18 @@ for line in lines:
                                   barrier=float(line[barrier_index:-1].strip(' \n'))
                                   )
 
-print(chemical_network.run_network({'Enzyme': 1, 'Substrate': 10}))
+react_df = chemical_network.run_network({'Enzyme': 1, 'Substrate': 10}, t_total=60)
+
+# react_df = react_df.set_index('time')
+
+# fig = plt.figure()
+# cols = list(react_df.columns)
+
+react_df.plot()
+plt.show()
+plt.close()
+
+# react_df.plot(list(react_df.columns))
+# plt.savefig('testplot.png', format='png')
+# plt.close()
 

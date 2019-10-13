@@ -1,4 +1,4 @@
 Reactants                       Products                        Sigma                       Barrier
-Enzyme Substrate                ES-complex                      1                           0
-ES-complex                      Enzyme Substrate                0.25                        0
-ES-complex                      Product                         0.25                        0
+Enzyme Substrate                ES-complex                      1.00                        0
+ES-complex                      Enzyme Substrate                1.00                        0
+ES-complex                      Enzyme Product                  0.80                        0
