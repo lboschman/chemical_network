@@ -63,7 +63,9 @@ app.layout = html.Div([
 
     html.Div(['Lets see what we have here',]),
 
-    dcc.Checklist(id='plot-compounds', options=[{'label': '', 'value': ''}], labelStyle={'display': 'inline-block'}),
+    dcc.Checklist(id='plot-compounds', options=[{'label': '', 'value': ''}],
+                  # labelStyle={'display': 'inline-block'}
+                  ),
 
     html.Button('OK', id='change-button'),
 
@@ -76,8 +78,9 @@ app.layout = html.Div([
     [
          Input('xaxis-type', 'value'),
          Input('yaxis-type', 'value'),
+        Input('plot-compounds', 'value')
 ])
-def update_graph(xaxis_type, yaxis_type):
+def update_graph(xaxis_type, yaxis_type, compound_list):
     dff = react_df
 
     return {
@@ -88,7 +91,7 @@ def update_graph(xaxis_type, yaxis_type):
             mode='lines',
             name=column_name
 
-        ) for column_name in dff.columns],
+        ) for column_name in compound_list],
         'layout': go.Layout(
             xaxis={
                 'title': 'Time',
@@ -107,7 +110,7 @@ def update_graph(xaxis_type, yaxis_type):
 @app.callback(
     [Output('plot-compounds', 'options'),
      Output('plot-compounds', 'value')],
-    [Input('indicator-graphic', 'figure')]
+    [Input('change-button', 'n_clicks')]
 )
 def render_compound_checkbox(figure):
     dff = react_df
