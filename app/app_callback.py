@@ -61,19 +61,21 @@ app.layout = html.Div([
 
     dcc.Graph(id='indicator-graphic'),
 
-    # dcc.Checklist(id='plot-')
+    html.Div(['Lets see what we have here',]),
+
+    dcc.Checklist(id='plot-compounds', options=[{'label': '', 'value': ''}], labelStyle={'display': 'inline-block'}),
+
+    html.Button('OK', id='change-button'),
 
 
 ])
 
+
 @app.callback(
     Output('indicator-graphic', 'figure'),
     [
-         # Input('xaxis-column', 'value'),
-         # Input('yaxis-column', 'value'),
          Input('xaxis-type', 'value'),
          Input('yaxis-type', 'value'),
-         # Input('year--slider', 'value')
 ])
 def update_graph(xaxis_type, yaxis_type):
     dff = react_df
@@ -100,6 +102,18 @@ def update_graph(xaxis_type, yaxis_type):
             hovermode='closest'
         )
     }
+
+
+@app.callback(
+    [Output('plot-compounds', 'options'),
+     Output('plot-compounds', 'value')],
+    [Input('indicator-graphic', 'figure')]
+)
+def render_compound_checkbox(figure):
+    dff = react_df
+    list_dict = [{'label': column, 'value': column} for column in dff.columns]
+    col_names = list(dff.columns)
+    return list_dict, col_names
 
 
 if __name__ == '__main__':
