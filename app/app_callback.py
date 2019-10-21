@@ -4,6 +4,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 
 import plotly.graph_objs as go
+import colorlover as cl
 
 import chem_network as cn
 
@@ -83,13 +84,22 @@ app.layout = html.Div([
 def update_graph(xaxis_type, yaxis_type, compound_list):
     dff = react_df
 
+    # columns = list(dff.columns)
+    # cl_scales = cl.scales['{}'.format(len(dff.columns))]['qual']
+    # qual_col_keys = cl_scales.keys()
+    # color_key = [key for key in qual_col_keys if key[:3]=="Set"]
+    # colors = qual_col_keys[color_key[1]]
+    # color_dict = {columns[i]: colors[i] for i in range(len(columns))}
+    # print(color_dict)
+
     return {
         'data': [go.Scatter(
             x=dff.index,
             y=dff[column_name],
             text=column_name,
             mode='lines',
-            name=column_name
+            name=column_name,
+            # line=dict(color=color_dict[column_name])
 
         ) for column_name in compound_list],
         'layout': go.Layout(
