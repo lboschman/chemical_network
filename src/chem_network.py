@@ -68,6 +68,3 @@ class Network:
 
         return pd.DataFrame(data=compound_densities).set_index('time')
 
-
-
-
