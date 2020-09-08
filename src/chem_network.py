@@ -10,23 +10,20 @@ from typing import Dict, List
 
 class Network:
     def __init__(self):
-        self.compounds: Dict = None
+        self.compounds: Dict = {}
         self.reactions: List = []
         self.rates: Dict = {}
         self.t_gas = 300
 
-    def add_compound(self, name, density=0):
-        if self.compounds is not None:
-            self.compounds.update({name: cm.Compound(name, density=density)})
-        else:
-            self.compounds = {name: cm.Compound(name, density=density)}
+    def add_compound(self, name: str, density=0):
+        self.compounds.update({name: cm.Compound(name, density=density)})
 
     def add_reaction(self, reactants: List[str], products: List[str], sigma, barrier=0., norm=1):
         for reactant in reactants:
-            if self.compounds is None or reactant not in self.compounds:
+            if reactant not in self.compounds:
                 self.add_compound(reactant)
         for product in products:
-            if self.compounds is None or product not in self.compounds:
+            if product not in self.compounds:
                 self.add_compound(product)
         self.reactions.append(rc.Reaction(reactants=[self.compounds[reactant] for reactant in reactants],
                                           products=[self.compounds[product] for product in products],
