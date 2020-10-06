@@ -104,7 +104,7 @@ class Network:
         compound_densities = {compound.name: [compound.density] for compound in self.compounds.values()}
 
         # After every step, append the updated densities to the dictionary of compound densities
-        for step in time_steps[1:]:
+        for _ in time_steps[1:]:
             self.apply_reactions(t_step=t_step)
             for compound in self.compounds.values():
                 compound_densities[compound.name].append(compound.density)
