@@ -120,7 +120,5 @@ dmypy.json
 .idea/
 
 
-/docs/build/
 /docs/make.bat
 /docs/Makefile
-/docs/build/html/
