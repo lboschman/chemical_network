@@ -60,4 +60,6 @@ html_static_path = ['_static']
 
 # Document Python Code
 autoapi_type = 'python'
-autoapi_dirs = '../../src'
+autoapi_dirs = [
+    '../../src'
+]
