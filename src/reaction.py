@@ -12,6 +12,14 @@ from typing import List
 class Reaction:
     def __init__(self, reactants: List[compounds.Compound], products: List[compounds.Compound],
                  sigma: float, barrier: float, norm: float=1):
+        """Initiate the reaction.
+
+        :param reactants: reactants in the reaction
+        :param products:  products in the reaction
+        :param sigma: the reaction cross section
+        :param barrier: the Arrhenius barrier
+        :param norm: if there is a degeneracy to rescale the reaction cross section
+        """
         self.reactants = reactants
         self.products = products
         self.sigma = sigma
