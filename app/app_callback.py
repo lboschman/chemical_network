@@ -12,6 +12,7 @@ import io
 import chem_network as cn
 
 from app.app_layout import layout
+from app.helpers import parse_contents
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -72,35 +73,6 @@ def render_compound_checkbox(react_df):
     list_dict = [{'label': column, 'value': column} for column in dff.columns]
     col_names = list(dff.columns)
     return list_dict, col_names
-
-
-def parse_contents(contents, filename):
-    """Parse the contents of a reaction file into a DataFrame."""
-    content_type, content_string = contents.split(',')
-
-    decoded = base64.b64decode(content_string)
-    try:
-        if 'csv' in filename:
-            # Assume that the user uploaded a CSV file
-            df = pd.read_csv(
-                io.StringIO(decoded.decode('utf-8')))
-        elif 'xls' in filename:
-            # Assume that the user uploaded an excel file
-            df = pd.read_excel(io.BytesIO(decoded))
-
-        elif 'txt' in filename:
-            df = pd.read_fwf(io.StringIO(decoded.decode('utf-8')))
-
-        else:
-            raise Exception("File should be xls(x), txt, or csv")
-
-        return df
-
-    except Exception as e:
-        print(e)
-        return html.Div([
-            'There was an error processing this file.'
-        ])
 
 
 @app.callback(Output('reaction-data', 'data'),
