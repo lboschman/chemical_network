@@ -1,7 +1,7 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 import dash_table
 
 import plotly.graph_objs as go
@@ -9,6 +9,7 @@ import datetime
 import base64
 import pandas as pd
 import io
+import json
 
 import chem_network as cn
 
@@ -18,24 +19,29 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 # Create the chemical network
 
-f = open('../data/test_reactions_2.txt', 'r')
-lines = f.readlines()
-header = lines.pop(0)
-reactant_index = 0
-product_index = header.index('Products')
-sigma_index = header.index('Sigma')
-barrier_index = header.index('Barrier')
 
-chemical_network = cn.Network()
+def parse_reaction_file(lines):
+    header = lines.pop(0)
+    reactant_index = 0
+    product_index = header.index('Products')
+    sigma_index = header.index('Sigma')
+    barrier_index = header.index('Barrier')
 
-for line in lines:
-    chemical_network.add_reaction(reactants=line[reactant_index:product_index].split(),
-                                  products=line[product_index:sigma_index].split(),
-                                  sigma=float(line[sigma_index:barrier_index].strip(' \n')),
-                                  barrier=float(line[barrier_index:-1].strip(' \n'))
-                                  )
+    chemical_network = cn.Network()
 
-react_df = chemical_network.run_network({'Enzyme': 1, 'Substrate': 10}, t_total=60)
+    for line in lines:
+        chemical_network.add_reaction(reactants=line[reactant_index:product_index].split(),
+                                      products=line[product_index:sigma_index].split(),
+                                      sigma=float(line[sigma_index:barrier_index].strip(' \n')),
+                                      barrier=float(line[barrier_index:-1].strip(' \n'))
+                                      )
+    return chemical_network
+
+
+# with open('../data/test_reactions_2.txt', 'r') as f:
+#     chemical_network = parse_reaction_file(f.readlines())
+
+# react_df = chemical_network.run_network({'Enzyme': 1, 'Substrate': 10}, t_total=60)
 
 app.layout = html.Div([
     html.Div([
@@ -97,6 +103,8 @@ app.layout = html.Div([
 
     html.Button('OK', id='change-button'),
 
+    dcc.Store(id='reaction-data')
+
 ])
 
 
@@ -105,18 +113,11 @@ app.layout = html.Div([
     [
         Input('xaxis-type', 'value'),
         Input('yaxis-type', 'value'),
-        Input('plot-compounds', 'value')
+        Input('plot-compounds', 'value'),
+        Input('reaction-data', 'data')
     ])
-def update_graph(xaxis_type, yaxis_type, compound_list):
-    dff = react_df
-
-    # columns = list(dff.columns)
-    # cl_scales = cl.scales['{}'.format(len(dff.columns))]['qual']
-    # qual_col_keys = cl_scales.keys()
-    # color_key = [key for key in qual_col_keys if key[:3]=="Set"]
-    # colors = qual_col_keys[color_key[1]]
-    # color_dict = {columns[i]: colors[i] for i in range(len(columns))}
-    # print(color_dict)
+def update_graph(xaxis_type, yaxis_type, compound_list, data):
+    dff = pd.DataFrame.from_dict(data)
 
     return {
         'data': [go.Scatter(
@@ -146,16 +147,17 @@ def update_graph(xaxis_type, yaxis_type, compound_list):
 @app.callback(
     [Output('plot-compounds', 'options'),
      Output('plot-compounds', 'value')],
-    [Input('change-button', 'n_clicks')]
+    [Input('change-button', 'n_clicks'),
+     Input('reaction-data', 'data')]
 )
-def render_compound_checkbox(figure):
-    dff = react_df
+def render_compound_checkbox(figure, react_df):
+    dff = pd.DataFrame.from_dict(react_df)
     list_dict = [{'label': column, 'value': column} for column in dff.columns]
     col_names = list(dff.columns)
     return list_dict, col_names
 
 
-def parse_contents(contents, filename, date):
+def parse_contents(contents, filename):
     content_type, content_string = contents.split(',')
 
     decoded = base64.b64decode(content_string)
@@ -169,23 +171,12 @@ def parse_contents(contents, filename, date):
             df = pd.read_excel(io.BytesIO(decoded))
 
         elif 'txt' in filename:
-            lines = decoded
-            header = lines.pop(0)
-            reactant_index = 0
-            product_index = header.index('Products')
-            sigma_index = header.index('Sigma')
-            barrier_index = header.index('Barrier')
-            chemical_network = cn.Network()
+            df = pd.read_fwf(io.StringIO(decoded.decode('utf-8')))
 
-            for line in lines:
-                chemical_network.add_reaction(reactants=line[reactant_index:product_index].split(),
-                                              products=line[product_index:sigma_index].split(),
-                                              sigma=float(line[sigma_index:barrier_index].strip(' \n')),
-                                              barrier=float(line[barrier_index:-1].strip(' \n'))
-                                              )
+        else:
+            raise Exception("File should be xls(x), txt, or csv")
 
-            react_df = chemical_network.run_network({'Enzyme': 1, 'Substrate': 10}, t_total=60)
-            return react_df
+        return df
 
     except Exception as e:
         print(e)
@@ -193,24 +184,27 @@ def parse_contents(contents, filename, date):
             'There was an error processing this file.'
         ])
 
-    return html.Div([
-        html.H5(filename),
-        html.H6(datetime.datetime.fromtimestamp(date)),
 
-        dash_table.DataTable(
-            data=df.to_dict('records'),
-            columns=[{'name': i, 'id': i} for i in df.columns]
-        ),
+@app.callback(Output('reaction-data', 'data'),
+              [Input('upload-chemical-system', 'contents'),
+               Input('upload-chemical-system', 'filename'),
+               ])
+def update_reaction_data(contents, filename):
+    df = parse_contents(contents, filename)
+    chemical_network = cn.Network()
 
-        html.Hr(),  # horizontal line
+    for index, row in df.iterrows():
+        chemical_network.add_reaction(
+            row['Reactants'].split(),
+            row['Products'].split(),
+            row['Sigma'],
+            row['Barrier'],
+        )
 
-        # For debugging, display the raw contents provided by the web browser
-        html.Div('Raw Content'),
-        html.Pre(contents[0:200] + '...', style={
-            'whiteSpace': 'pre-wrap',
-            'wordBreak': 'break-all'
-        })
-    ])
+    # TODO set starting densities via file and or number editors
+    # TODO set running time, and time resolution via number editors
+    react_df = chemical_network.run_network({'Enzyme': 1, 'Substrate': 10}, t_total=60)
+    return react_df.to_dict('records')
 
 
 if __name__ == '__main__':
