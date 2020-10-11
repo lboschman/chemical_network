@@ -88,6 +88,7 @@ app.layout = html.Div([
         Input('reaction-data', 'data')
     ])
 def update_graph(xaxis_type, yaxis_type, compound_list, data):
+    """Update the plotted graph"""
     dff = pd.DataFrame.from_dict(data)
 
     return {
@@ -122,6 +123,10 @@ def update_graph(xaxis_type, yaxis_type, compound_list, data):
      Input('reaction-data', 'data')]
 )
 def render_compound_checkbox(figure, react_df):
+    """Create the compound checkbox.
+
+    This checkbox helps remove lines for clarity in the simulation plot.
+    """
     dff = pd.DataFrame.from_dict(react_df)
     list_dict = [{'label': column, 'value': column} for column in dff.columns]
     col_names = list(dff.columns)
@@ -129,6 +134,7 @@ def render_compound_checkbox(figure, react_df):
 
 
 def parse_contents(contents, filename):
+    """Parse the contents of a reaction file into a DataFrame."""
     content_type, content_string = contents.split(',')
 
     decoded = base64.b64decode(content_string)
@@ -161,6 +167,10 @@ def parse_contents(contents, filename):
                Input('upload-chemical-system', 'filename'),
                ])
 def update_reaction_data(contents, filename):
+    """Read a file, initiate a chemical network, and run the network.
+
+    Output data is stored in a DataFrame, and then stored in a dcc.Store object.
+    """
     if contents is None:
         df = pd.read_fwf('../data/test_reactions.txt')
     else:
