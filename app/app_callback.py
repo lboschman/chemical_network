@@ -2,22 +2,17 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
-import dash_table
 
 import plotly.graph_objs as go
-import datetime
 import base64
 import pandas as pd
 import io
-import json
 
 import chem_network as cn
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-
-# Create the chemical network
 
 
 def parse_reaction_file(lines):
@@ -37,11 +32,6 @@ def parse_reaction_file(lines):
                                       )
     return chemical_network
 
-
-# with open('../data/test_reactions_2.txt', 'r') as f:
-#     chemical_network = parse_reaction_file(f.readlines())
-
-# react_df = chemical_network.run_network({'Enzyme': 1, 'Substrate': 10}, t_total=60)
 
 app.layout = html.Div([
     html.Div([
@@ -190,7 +180,11 @@ def parse_contents(contents, filename):
                Input('upload-chemical-system', 'filename'),
                ])
 def update_reaction_data(contents, filename):
-    df = parse_contents(contents, filename)
+    if contents is None:
+        df = pd.read_fwf('../data/test_reactions.txt')
+    else:
+        df = parse_contents(contents, filename)
+
     chemical_network = cn.Network()
 
     for index, row in df.iterrows():
