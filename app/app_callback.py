@@ -1,7 +1,8 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Input, Output, State
+from dash.dependencies import Input, Output
+from dash.exceptions import PreventUpdate
 
 import plotly.graph_objs as go
 import base64
@@ -38,13 +39,12 @@ app.layout = html.Div([
                        ),
             html.Div(id='output-data-upload'),
 
-        ])
-        ,
+        ]),
 
         html.Div([
 
             dcc.RadioItems(
-                id='xaxis-type',
+                id='x_axis-type',
                 options=[{'label': i, 'value': i} for i in ['Linear', 'Log']],
                 value='Linear',
                 labelStyle={'display': 'inline-block'}
@@ -55,7 +55,7 @@ app.layout = html.Div([
         html.Div([
 
             dcc.RadioItems(
-                id='yaxis-type',
+                id='y_axis-type',
                 options=[{'label': i, 'value': i} for i in ['Linear', 'Log']],
                 value='Linear',
                 labelStyle={'display': 'inline-block'}
@@ -82,12 +82,12 @@ app.layout = html.Div([
 @app.callback(
     Output('indicator-graphic', 'figure'),
     [
-        Input('xaxis-type', 'value'),
-        Input('yaxis-type', 'value'),
+        Input('x_axis-type', 'value'),
+        Input('y_axis-type', 'value'),
         Input('plot-compounds', 'value'),
         Input('reaction-data', 'data')
     ])
-def update_graph(xaxis_type, yaxis_type, compound_list, data):
+def update_graph(x_axis_type, y_axis_type, compound_list, data):
     """Update the plotted graph"""
     dff = pd.DataFrame.from_dict(data)
 
@@ -104,11 +104,11 @@ def update_graph(xaxis_type, yaxis_type, compound_list, data):
         'layout': go.Layout(
             xaxis={
                 'title': 'Time',
-                'type': 'linear' if xaxis_type == 'Linear' else 'log'
+                'type': 'linear' if x_axis_type == 'Linear' else 'log'
             },
             yaxis={
                 'title': 'Abundance',
-                'type': 'linear' if yaxis_type == 'Linear' else 'log'
+                'type': 'linear' if y_axis_type == 'Linear' else 'log'
             },
             margin={'l': 40, 'b': 40, 't': 10, 'r': 0},
             hovermode='closest'
@@ -119,14 +119,15 @@ def update_graph(xaxis_type, yaxis_type, compound_list, data):
 @app.callback(
     [Output('plot-compounds', 'options'),
      Output('plot-compounds', 'value')],
-    [Input('change-button', 'n_clicks'),
-     Input('reaction-data', 'data')]
+    [Input('reaction-data', 'data')]
 )
-def render_compound_checkbox(figure, react_df):
+def render_compound_checkbox(react_df):
     """Create the compound checkbox.
 
     This checkbox helps remove lines for clarity in the simulation plot.
     """
+    if react_df is None:
+        raise PreventUpdate
     dff = pd.DataFrame.from_dict(react_df)
     list_dict = [{'label': column, 'value': column} for column in dff.columns]
     col_names = list(dff.columns)
