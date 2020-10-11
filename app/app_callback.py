@@ -29,6 +29,7 @@ def update_graph(x_axis_type, y_axis_type, compound_list, data):
     dff = pd.DataFrame.from_dict(data)
 
     return {
+        # Make data points for every selected compound
         'data': [go.Scatter(
             x=dff.index,
             y=dff[column_name],
@@ -66,6 +67,7 @@ def render_compound_checkbox(react_df):
     if react_df is None:
         raise PreventUpdate
     dff = pd.DataFrame.from_dict(react_df)
+    # Create labels from the column names in the reaction dataframe
     list_dict = [{'label': column, 'value': column} for column in dff.columns]
     col_names = list(dff.columns)
     return list_dict, col_names
@@ -85,8 +87,10 @@ def update_reaction_data(contents, filename):
     else:
         df = parse_contents(contents, filename)
 
+    # Initiate chemical network
     chemical_network = cn.Network()
 
+    # Add individual reactions to the network
     for index, row in df.iterrows():
         chemical_network.add_reaction(
             row['Reactants'].split(),
@@ -97,6 +101,7 @@ def update_reaction_data(contents, filename):
 
     # TODO set starting densities via file and or number editors
     # TODO set running time, and time resolution via number editors
+    # Let the network run for a predetermined amount of time
     react_df = chemical_network.run_network({'Enzyme': 1, 'Substrate': 10}, t_total=60)
     return react_df.to_dict('records')
 
