@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import compounds
+from . import compounds
 
 import numpy as np
 from scipy.constants import Boltzmann

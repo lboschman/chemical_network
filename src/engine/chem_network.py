@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-import compounds as cm
-import reaction as rc
+from . import compounds as cm
+from . import reaction as rc
 
 import numpy as np
 import pandas as pd

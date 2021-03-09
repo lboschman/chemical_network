@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import dash
 from dash.dependencies import Input, Output
 from dash.exceptions import PreventUpdate
@@ -5,10 +7,10 @@ from dash.exceptions import PreventUpdate
 import plotly.graph_objs as go
 import pandas as pd
 
-import chem_network as cn
+from ..engine import chem_network as cn
 
-from app.app_layout import layout
-from app.helpers import parse_contents
+from .app_layout import layout
+from .helpers import parse_contents
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
