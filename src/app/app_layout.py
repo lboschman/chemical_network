@@ -1,7 +1,8 @@
 import dash_core_components as dcc
 import dash_html_components as html
 
-layout = html.Div([
+def make_layout():
+    layout = html.Div([
     html.Div([
 
         html.Div([
@@ -61,5 +62,6 @@ layout = html.Div([
     html.Button('OK', id='change-button'),
 
     dcc.Store(id='reaction-data')
+    ])
 
-])
+    return layout

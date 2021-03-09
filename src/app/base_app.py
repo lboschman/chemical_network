@@ -9,13 +9,13 @@ import pandas as pd
 
 from ..engine import chem_network as cn
 
-from .app_layout import layout
+from .app_layout import make_layout
 from .helpers import parse_contents
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-app.layout = layout
+app.layout = make_layout()
 
 
 @app.callback(
