@@ -93,7 +93,7 @@ def update_reaction_data(contents, filename):
     chemical_network = cn.Network()
 
     # Add individual reactions to the network
-    for index, row in df.iterrows():
+    for _, row in df.iterrows():
         chemical_network.add_reaction(
             row['Reactants'].split(),
             row['Products'].split(),

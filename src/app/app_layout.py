@@ -92,25 +92,29 @@ def build_banner():
 
 
 def make_layout():
-    layout = html.Div([
-    html.Div([
+    layout = html.Div(
+        id='big-app-container',
+        children=[
+            build_banner(),
+            html.Div([
 
-        build_file_upload(),
+                build_file_upload(),
 
-        build_axis_scale_toggles(),
-    ]),
+                build_axis_scale_toggles(),
+            ]),
 
-    dcc.Graph(id='indicator-graphic'),
+            dcc.Graph(id='indicator-graphic'),
 
-    html.Div(['Lets see what we have here', ]),
+            html.Div(['Lets see what we have here', ]),
 
-    dcc.Checklist(id='plot-compounds', options=[{'label': '', 'value': ''}],
-                  # labelStyle={'display': 'inline-block'}
-                  ),
+            dcc.Checklist(id='plot-compounds', options=[{'label': '', 'value': ''}],
+                        # labelStyle={'display': 'inline-block'}
+                        ),
 
-    html.Button('OK', id='change-button'),
+            html.Button('OK', id='change-button'),
 
-    dcc.Store(id='reaction-data')
-    ])
+            dcc.Store(id='reaction-data'),
+        ]
+    )
 
     return layout
