@@ -122,4 +122,5 @@ dmypy.json
 
 /docs/make.bat
 /docs/Makefile
+/docs/html
 .vscode/settings.json
