@@ -1,5 +1,6 @@
 import dash_core_components as dcc
 import dash_html_components as html
+from dash_html_components.Div import Div
 
 def build_file_upload():
 
@@ -23,7 +24,7 @@ def build_file_upload():
                     'textAlign': 'center',
                     'margin': '10px'
                 },
-                       # Allow multiple files to be uploaded
+                # Allow multiple files to be uploaded
                 multiple=False
             )
         ]
@@ -93,34 +94,76 @@ def build_banner():
     )
 
 
+def build_tabs():
+    return html.Div(
+        id="tabs",
+        className="tabs",
+        children=[
+            dcc.Tabs(
+                id="app-tabs",
+                value="tab2",
+                className="custom-tabs",
+                children=[
+                    dcc.Tab(
+                        id="Specs-tab",
+                        label="Specification Settings",
+                        value="tab1",
+                        className="custom-tab",
+                        selected_className="custom-tab--selected",
+                    ),
+                    dcc.Tab(
+                        id="Plot-chart-tab",
+                        label="Reaction Dashboard",
+                        value="tab2",
+                        className="custom-tab",
+                        selected_className="custom-tab--selected",
+                    ),
+                ],
+            )
+        ],
+    )
+
+
 def make_layout():
     layout = html.Div(
         id='big-app-container',
         children=[
             # TODO make the banner look nicer
             build_banner(),
+            html.Div(
+                id='app-container',
+                children=[
+                    # build_tabs(),
+                    # Main content of the app
+                    html.Div(id='app-content')
+                ]
+            )
+
+                # build_file_upload(),
+
+                # build_axis_scale_toggles(),
             # TODO make tabs: 
             # 1) with settings 
             # 2) with table with reactions 
             # 3) with graph and output and stuff
-            html.Div([
+            # html.Div([
 
-                build_file_upload(),
+            #     build_file_upload(),
 
-                build_axis_scale_toggles(),
-            ]),
+            #     build_axis_scale_toggles(),
+            # ]),
 
-            dcc.Graph(id='indicator-graphic'),
+            # dcc.Graph(id='indicator-graphic'),
 
-            html.Div(['Lets see what we have here', ]),
+            # html.Div(['Lets see what we have here', ]),
 
-            dcc.Checklist(id='plot-compounds', options=[{'label': '', 'value': ''}],
-                        # labelStyle={'display': 'inline-block'}
-                        ),
+            # dcc.Checklist(id='plot-compounds', options=[{'label': '', 'value': ''}],
+            #             # labelStyle={'display': 'inline-block'}
+            #             ),
 
-            html.Button('OK', id='change-button'),
+            # html.Button('OK', id='change-button'),
 
-            dcc.Store(id='reaction-data'),
+            # dcc.Store(id='reaction-data'),
         ]
     )
 
