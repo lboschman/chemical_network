@@ -31,6 +31,8 @@ def build_file_upload():
 
 
 def build_axis_scale_toggles():
+    # TODO replace the radio buttons with a toggleswitch
+    # https://dash.plotly.com/dash-daq/toggleswitch
     return html.Div(
         id="scale-toggles",
         children=[
@@ -95,7 +97,12 @@ def make_layout():
     layout = html.Div(
         id='big-app-container',
         children=[
+            # TODO make the banner look nicer
             build_banner(),
+            # TODO make tabs: 
+            # 1) with settings 
+            # 2) with table with reactions 
+            # 3) with graph and output and stuff
             html.Div([
 
                 build_file_upload(),
