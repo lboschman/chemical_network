@@ -4,12 +4,14 @@ import dash
 from dash.dependencies import Input, Output
 from dash.exceptions import PreventUpdate
 
+import dash_html_components as html
+
 import plotly.graph_objs as go
 import pandas as pd
 
 from ..engine import chem_network as cn
 
-from .app_layout import make_layout
+from .app_layout import make_layout, build_tab_1
 from .helpers import parse_contents
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -106,6 +108,24 @@ def update_reaction_data(contents, filename):
     # Let the network run for a predetermined amount of time
     react_df = chemical_network.run_network({'Enzyme': 1, 'Substrate': 10}, t_total=60)
     return react_df.to_dict('records')
+
+
+@app.callback(
+    [Output("app-content", "children")],
+    [Input("app-tabs", "value")]
+)
+def render_tab_content(tab_switch):
+    if tab_switch == "tab1":
+        return build_tab_1()
+    else:
+        return (
+            html.Div(
+                id="status-container",
+                children=[
+                    html.Div(id="graphs-container"),
+                ],
+            ),
+        )
 
 
 if __name__ == '__main__':

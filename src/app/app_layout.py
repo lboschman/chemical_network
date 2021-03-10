@@ -101,7 +101,7 @@ def build_tabs():
         children=[
             dcc.Tabs(
                 id="app-tabs",
-                value="tab2",
+                value="tab1",
                 className="custom-tabs",
                 children=[
                     dcc.Tab(
@@ -123,6 +123,28 @@ def build_tabs():
         ],
     )
 
+def build_graph_area():
+    return html.Div(
+        id='graph-container',
+        children=[
+            dcc.Graph(id='indicator-graphic'),
+            dcc.Checklist(id='plot-compounds', options=[{'label': '', 'value': ''}],
+                    # labelStyle={'display': 'inline-block'}
+                    ),
+            html.Button('OK', id='change-button'),
+        ]
+    )
+
+def build_tab_1():
+    return (html.Div(
+        id='tab-1-container',
+        children=[
+            build_file_upload(),
+            build_axis_scale_toggles(),
+            build_graph_area(),
+        ]
+    ),)
+
 
 def make_layout():
     layout = html.Div(
@@ -130,18 +152,18 @@ def make_layout():
         children=[
             # TODO make the banner look nicer
             build_banner(),
+            
             html.Div(
                 id='app-container',
                 children=[
-                    # build_tabs(),
+                    build_tabs(),
                     # Main content of the app
                     html.Div(id='app-content')
                 ]
-            )
+            ),
 
-                # build_file_upload(),
+            dcc.Store(id='reaction-data'),
 
-                # build_axis_scale_toggles(),
             # TODO make tabs: 
             # 1) with settings 
             # 2) with table with reactions 
