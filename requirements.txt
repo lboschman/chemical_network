@@ -35,7 +35,7 @@ more-itertools==8.5.0
 numpy==1.19.1
 packaging==20.4
 pandas==1.1.1
-Pillow==7.2.0
+Pillow==8.1.1
 plotly==4.9.0
 pluggy==0.13.1
 py==1.9.0
