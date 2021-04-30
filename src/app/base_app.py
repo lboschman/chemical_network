@@ -87,7 +87,7 @@ def update_reaction_data(contents, filename):
     Output data is stored in a DataFrame, and then stored in a dcc.Store object.
     """
     if contents is None:
-        df = pd.read_fwf('../data/test_reactions.txt')
+        df = pd.read_fwf('data/test_reactions.txt')
     else:
         df = parse_contents(contents, filename)
 
